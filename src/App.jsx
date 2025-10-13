@@ -5,6 +5,7 @@ import LandingScreen from "./components/LandingScreen";
 import MatrixBackground from "./components/MatrixBackground";
 import Animated3DSection from "./components/Animated3DSection";
 import TechCategory from "./components/TechCategory";
+import JinwooEasterEgg from "./components/JinwooEasterEgg";
 
 export default function App() {
 	const [loading, setLoading] = useState(true);
@@ -15,6 +16,7 @@ export default function App() {
 			{!loading && (
 				<div className="relative bg-black text-white min-h-screen font-sans overflow-hidden">
 					<MatrixBackground />
+					<JinwooEasterEgg />
 
 					<header className="relative z-10 p-10 text-center bg-gradient-to-b from-black via-black to-transparent shadow-md border-b border-gray-800">
 						<motion.h1
