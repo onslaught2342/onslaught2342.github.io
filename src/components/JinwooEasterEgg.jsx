@@ -56,7 +56,7 @@ export default function JinwooEasterEgg() {
 		if (active) {
 			if (!audioRef.current) {
 				const audio = new Audio(
-					"https://cdn.onslaught2342.qzz.io/assets/aura.m4a"
+					"https://cdn.onslaught2342.qzz.io/assets/audio/music/aura.m4a"
 				);
 				audio.loop = true;
 				audio.volume = 0.4;
@@ -84,7 +84,7 @@ export default function JinwooEasterEgg() {
 				className="fixed top-0 left-0 w-screen h-screen object-cover opacity-50 z-[4] pointer-events-none"
 			>
 				<source
-					src="https://cdn.onslaught2342.qzz.io/assets/aura.mp4"
+					src="https://cdn.onslaught2342.qzz.io/assets/videos/wallpapers/aura.mp4"
 					type="video/mp4"
 				/>
 			</video>
