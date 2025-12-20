@@ -12,7 +12,8 @@
 		"preloader": "ts-node preloader-gen.ts",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
-		"update": "pnpm audit fix && pnpm update"
+		"update": "pnpm audit fix && pnpm update",
+		"lock-gen": "npm install --package-lock-only"
 	},
 	"dependencies": {
 		"@hookform/resolvers": "^3.10.0",
