@@ -1,1 +1,150 @@
-@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+	:root {
+		--background: 0 0% 0%;
+		--foreground: 120 100% 50%;
+
+		--card: 0 0% 3%;
+		--card-foreground: 120 100% 50%;
+
+		--popover: 0 0% 3%;
+		--popover-foreground: 120 100% 50%;
+
+		--primary: 120 100% 50%;
+		--primary-foreground: 0 0% 0%;
+
+		--secondary: 180 100% 50%;
+		--secondary-foreground: 0 0% 0%;
+
+		--muted: 120 50% 10%;
+		--muted-foreground: 120 60% 60%;
+
+		--accent: 180 100% 50%;
+		--accent-foreground: 0 0% 0%;
+
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 0 0% 100%;
+
+		--border: 120 100% 25%;
+		--input: 120 100% 25%;
+		--ring: 120 100% 50%;
+
+		--radius: 0.25rem;
+
+		/* Custom tokens */
+		--glow-primary: 0 0 20px hsl(120 100% 50% / 0.5);
+		--glow-primary-intense: 0 0 40px hsl(120 100% 50% / 0.8);
+		--glow-accent: 0 0 20px hsl(180 100% 50% / 0.5);
+	}
+
+	.dark {
+		--background: 0 0% 0%;
+		--foreground: 120 100% 50%;
+		--card: 0 0% 3%;
+		--card-foreground: 120 100% 50%;
+		--popover: 0 0% 3%;
+		--popover-foreground: 120 100% 50%;
+		--primary: 120 100% 50%;
+		--primary-foreground: 0 0% 0%;
+		--secondary: 180 100% 50%;
+		--secondary-foreground: 0 0% 0%;
+		--muted: 120 50% 10%;
+		--muted-foreground: 120 60% 60%;
+		--accent: 180 100% 50%;
+		--accent-foreground: 0 0% 0%;
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 0 0% 100%;
+		--border: 120 100% 25%;
+		--input: 120 100% 25%;
+		--ring: 120 100% 50%;
+	}
+}
+
+@layer base {
+	* {
+		@apply border-border;
+	}
+
+	body {
+		@apply bg-background font-mono text-foreground antialiased;
+		font-family: "JetBrains Mono", monospace;
+	}
+
+	::selection {
+		@apply bg-primary text-primary-foreground;
+	}
+}
+
+@layer components {
+	.terminal-box {
+		@apply border border-border bg-card/80 backdrop-blur-sm;
+		box-shadow: var(--glow-primary);
+	}
+
+	.terminal-box-intense {
+		@apply border-2 border-primary bg-card/90 backdrop-blur-sm;
+		box-shadow: var(--glow-primary-intense);
+	}
+
+	.glow-text {
+		text-shadow:
+			0 0 10px hsl(var(--primary)),
+			0 0 20px hsl(var(--primary) / 0.5);
+	}
+
+	.glow-text-accent {
+		text-shadow:
+			0 0 10px hsl(var(--accent)),
+			0 0 20px hsl(var(--accent) / 0.5);
+	}
+
+	.scanline {
+		background: repeating-linear-gradient(
+			0deg,
+			transparent 0px,
+			transparent 1px,
+			hsl(var(--primary) / 0.03) 1px,
+			hsl(var(--primary) / 0.03) 2px
+		);
+	}
+
+	.progress-glow {
+		box-shadow:
+			0 0 10px hsl(var(--primary) / 0.8),
+			inset 0 0 5px hsl(var(--primary) / 0.3);
+	}
+}
+
+@layer utilities {
+	.animate-pulse-slow {
+		animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+	}
+
+	.animate-flicker {
+		animation: flicker 0.15s infinite;
+	}
+}
+
+@keyframes flicker {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.8;
+	}
+}
+
+@keyframes scanline-move {
+	0% {
+		transform: translateY(0);
+	}
+	100% {
+		transform: translateY(4px);
+	}
+}
