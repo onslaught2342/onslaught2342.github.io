@@ -49,21 +49,6 @@ export default defineConfig(({ mode }) => {
 			reportCompressedSize: false,
 			chunkSizeWarningLimit: 1024,
 			sourcemap: isDev,
-			rollupOptions: {
-				output: {
-					manualChunks(id) {
-						if (id.includes("node_modules")) {
-							if (id.includes("react")) return "react-vendor";
-							if (id.includes("three")) return "three-vendor";
-							return "vendor";
-						}
-					},
-					compact: true,
-					entryFileNames: "assets/[name]-[hash].js",
-					chunkFileNames: "assets/[name]-[hash].js",
-					assetFileNames: "assets/[name]-[hash][extname]",
-				},
-			},
 		},
 
 		esbuild: {
