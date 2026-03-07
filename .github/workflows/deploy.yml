@@ -16,27 +16,29 @@ concurrency:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        node-version: [24]   # your Node version
     steps:
       - name: 🔍 Checkout repo
         uses: actions/checkout@v4
 
+      - name: ⚡ Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10   # latest stable pnpm
+
       - name: ⚙️ Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
-      - name: 📥 Install pnpm globally
-        run: |
-          npm install -g pnpm
-          echo "::add-path::$(npm bin -g)"
-
-      - name: 📥 Install dependencies with pnpm
+      - name: 📥 Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: 🛠 Build with pnpm
+      - name: 🛠 Build
         run: pnpm run build
 
       - name: 🚀 Upload to GitHub Pages
