@@ -54,6 +54,7 @@ const MatrixBackground = memo(() => {
       }
       lastTime = timestamp;
 
+      
       ctx.fillStyle = `rgba(0, 0, 0, ${fadeAlpha})`;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -67,15 +68,18 @@ const MatrixBackground = memo(() => {
         const char =
           chars[Math.floor(Math.random() * chars.length)];
 
+        
         ctx.shadowColor = "#00ff88";
         ctx.shadowBlur = glow;
         ctx.fillStyle = "#ccffcc";
         ctx.fillText(char, x, y);
 
+        
         ctx.shadowBlur = 0;
         ctx.fillStyle = "#00aa55";
         ctx.fillText(char, x, y - fontSize);
 
+        
         if (y > window.innerHeight && Math.random() > 0.975) {
           drops[i] = 0;
         } else {

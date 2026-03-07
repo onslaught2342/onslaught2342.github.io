@@ -14,6 +14,7 @@ const JinwooEasterEgg = memo(() => {
     setTimeout(() => setShowText(false), 5000);
   }, []);
 
+  // Detect "jinwoo" typed on desktop
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
       inputRef.current = (inputRef.current + e.key.toLowerCase()).slice(-7);
@@ -25,17 +26,18 @@ const JinwooEasterEgg = memo(() => {
     return () => window.removeEventListener("keydown", handleKey);
   }, [activateEasterEgg]);
 
+  
   useEffect(() => {
     function handleTap() {
       tapCountRef.current += 1;
-
+      
       if (tapCountRef.current === 1) {
         if (tapTimeoutRef.current) clearTimeout(tapTimeoutRef.current);
         tapTimeoutRef.current = setTimeout(() => {
           tapCountRef.current = 0;
         }, 3000);
       }
-
+      
       if (tapCountRef.current >= 5) {
         if (tapTimeoutRef.current) clearTimeout(tapTimeoutRef.current);
         tapCountRef.current = 0;
@@ -46,6 +48,7 @@ const JinwooEasterEgg = memo(() => {
     return () => window.removeEventListener("touchstart", handleTap);
   }, [activateEasterEgg]);
 
+  
   useEffect(() => {
     if (active && !audioRef.current) {
       const audio = new Audio(
@@ -53,10 +56,10 @@ const JinwooEasterEgg = memo(() => {
       );
       audio.loop = true;
       audio.volume = 0.4;
-      audio.play().catch(() => { });
+      audio.play().catch(() => {});
       audioRef.current = audio;
     }
-
+    
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -69,6 +72,7 @@ const JinwooEasterEgg = memo(() => {
 
   return (
     <>
+      {}
       <video
         autoPlay
         loop
@@ -82,6 +86,7 @@ const JinwooEasterEgg = memo(() => {
         />
       </video>
 
+      {}
       {showText && (
         <div className="fixed inset-0 flex flex-col items-center justify-center z-[9999] bg-black/90 backdrop-blur-3xl animate-fade-in">
           <h1 className="text-5xl md:text-8xl font-extrabold text-primary tracking-widest drop-shadow-[0_0_40px_hsl(var(--primary))] text-center px-4 animate-scale-in">
