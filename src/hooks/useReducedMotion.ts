@@ -5,14 +5,14 @@ export const useReducedMotion = () => {
   const [isLowEndDevice, setIsLowEndDevice] = useState(false);
 
   useEffect(() => {
-    
+    // Check system preference
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReducedMotion(mediaQuery.matches);
 
     const handler = (e: MediaQueryListEvent) => setPrefersReducedMotion(e.matches);
     mediaQuery.addEventListener('change', handler);
 
-    
+    // Detect low-end device
     const checkDevice = () => {
       const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
       const hasLowMemory = 'deviceMemory' in navigator && (navigator as any).deviceMemory < 4;

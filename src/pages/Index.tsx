@@ -1,17 +1,26 @@
 import { useState, useEffect } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { AnimatePresence, motion } from 'framer-motion';
 import Terminal from '@/components/Terminal';
 import Portfolio from '@/components/Portfolio';
+import ConsoleInit from '@/components/ConsoleInit';
+
+const SKIP_INTRO_KEY = 'onslaught_skip_intro';
 
 const Index = () => {
-  const [showTerminal, setShowTerminal] = useState(true);
+  const hasVisited = localStorage.getItem(SKIP_INTRO_KEY) === 'true';
+  const [showTerminal, setShowTerminal] = useState(!hasVisited);
 
   const handleTerminalComplete = () => {
     setShowTerminal(false);
+    localStorage.setItem(SKIP_INTRO_KEY, 'true');
   };
 
   const handleSkip = () => {
-    if (showTerminal) setShowTerminal(false);
+    if (showTerminal) {
+      setShowTerminal(false);
+      localStorage.setItem(SKIP_INTRO_KEY, 'true');
+    }
   };
 
   useEffect(() => {
@@ -21,6 +30,13 @@ const Index = () => {
 
   return (
     <div onClick={showTerminal ? handleSkip : undefined}>
+      <Helmet>
+        <title>Onslaught2342 | Aspiring Ethical Hacker & Security Researcher</title>
+        <meta name="description" content="Portfolio of Onslaught2342 — aspiring ethical hacker, security researcher, and developer building cybersecurity tools and encryption projects." />
+        <meta property="og:title" content="Onslaught2342 | Security Researcher" />
+        <meta property="og:description" content="Aspiring ethical hacker exploring cybersecurity, encryption, and advanced computing." />
+      </Helmet>
+      <ConsoleInit />
       <AnimatePresence mode="wait">
         {showTerminal ? (
           <motion.div

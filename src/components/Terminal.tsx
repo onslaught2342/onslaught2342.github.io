@@ -63,7 +63,7 @@ const Terminal = memo(({ onComplete }: TerminalProps) => {
     <div className="fixed inset-0 bg-background flex items-center justify-center p-3 sm:p-4 z-50 animate-fade-in">
       <div className="w-full max-w-3xl">
         <div className="rounded-xl overflow-hidden glass-intense shadow-[0_0_80px_hsl(var(--primary)/0.2),0_0_120px_hsl(var(--accent)/0.1)] animate-scale-in">
-          {}
+          {/* Terminal Header */}
           <div className="px-3 sm:px-4 py-2.5 flex items-center justify-between border-b border-border/20 bg-background/30">
             <div className="flex items-center gap-1.5 sm:gap-2">
               <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-destructive/80" />
@@ -76,7 +76,7 @@ const Terminal = memo(({ onComplete }: TerminalProps) => {
             <div className="w-12 sm:w-16" />
           </div>
           
-          {}
+          {/* Terminal Body */}
           <div className="p-4 sm:p-6 min-h-[300px] sm:min-h-[350px] font-mono text-xs sm:text-sm">
             <div className="text-muted-foreground/50 text-[10px] sm:text-xs mb-3 sm:mb-4 border-b border-border/20 pb-2">
               GNU/Linux 5.15.0-kali3-amd64 | <span className="text-accent">SECURE SHELL</span> | <span className="text-primary">ENCRYPTED</span>

@@ -1,5 +1,7 @@
 import { memo, useState, useCallback, useEffect, useRef } from 'react';
-import { Code, Shield, Server, Github, MessageSquare, Cloud, Palette, Network, Volume2, VolumeX } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Code, Shield, Server, Github, MessageSquare, Cloud, Palette, Network, ArrowRight, Globe, Menu } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import MatrixBackground from './MatrixBackground';
@@ -7,9 +9,20 @@ import ScanlineEffect from './ScanlineEffect';
 import GlitchText from './GlitchText';
 import CommandBox from './CommandBox';
 import SkillBar from './SkillBar';
+import GoalProgressBar from './GoalProgressBar';
 import ProjectCard from './ProjectCard';
 import JinwooEasterEgg from './JinwooEasterEgg';
-import { useAmbientAudio } from '@/hooks/useAmbientAudio';
+import EasterEggs from './EasterEggs';
+import UptimeCounter from './UptimeCounter';
+import CommandPalette from './CommandPalette';
+import GitHubProjectCard from './GitHubProjectCard';
+import IdleLockScreen from './IdleLockScreen';
+import RepoCardSkeleton from './RepoCardSkeleton';
+import BackToTop from './BackToTop';
+import ThemeToggle from './ThemeToggle';
+import { useFeaturedRepos } from '@/hooks/useGitHubRepos';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+
 import { toast } from '@/hooks/use-toast';
 import logo from '@/assets/logo.png';
 
@@ -17,9 +30,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 const Portfolio = memo(() => {
   const [initialBoxesComplete, setInitialBoxesComplete] = useState(0);
+  const [logoGlitch, setLogoGlitch] = useState(false);
+  const logoClickRef = useRef(0);
+  const logoTimerRef = useRef<NodeJS.Timeout | null>(null);
   const mainRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLElement>(null);
-  const { isMuted, toggleMute } = useAmbientAudio();
+  
+  const { data: featuredRepos, isLoading: reposLoading } = useFeaturedRepos(4);
   
   const handlePriorityComplete = useCallback(() => {
     setInitialBoxesComplete(prev => prev + 1);
@@ -27,12 +44,12 @@ const Portfolio = memo(() => {
 
   const canAnimateScrollBoxes = initialBoxesComplete >= 3;
 
-  
+  // GSAP scroll animations
   useEffect(() => {
     if (!canAnimateScrollBoxes) return;
 
     const ctx = gsap.context(() => {
-      
+      // Animate sections sliding in
       gsap.utils.toArray<HTMLElement>('.gsap-section').forEach((section, i) => {
         gsap.fromTo(section, 
           { y: 60, opacity: 0 },
@@ -51,7 +68,7 @@ const Portfolio = memo(() => {
         );
       });
 
-      
+      // Tech cards stagger
       gsap.utils.toArray<HTMLElement>('.tech-card').forEach((card, i) => {
         gsap.fromTo(card,
           { y: 40, opacity: 0, scale: 0.95 },
@@ -71,7 +88,7 @@ const Portfolio = memo(() => {
         );
       });
 
-      
+      // Project cards slide alternating
       gsap.utils.toArray<HTMLElement>('.project-card').forEach((card, i) => {
         gsap.fromTo(card,
           { x: i % 2 === 0 ? -40 : 40, opacity: 0 },
@@ -89,7 +106,7 @@ const Portfolio = memo(() => {
         );
       });
 
-      
+      // Goal items
       gsap.utils.toArray<HTMLElement>('.goal-item').forEach((item, i) => {
         gsap.fromTo(item,
           { x: -30, opacity: 0 },
@@ -108,7 +125,7 @@ const Portfolio = memo(() => {
         );
       });
 
-      
+      // Footer
       const footer = document.querySelector('.gsap-footer');
       if (footer) {
         gsap.fromTo(footer,
@@ -127,7 +144,7 @@ const Portfolio = memo(() => {
         );
       }
 
-      
+      // Header shrink on scroll
       if (headerRef.current) {
         ScrollTrigger.create({
           start: 'top top',
@@ -155,57 +172,6 @@ const Portfolio = memo(() => {
     });
   }, []);
 
-  const projects = [
-    {
-      title: 'Encryption-Based Security Tools',
-      description: 'Developing hybrid AES + RSA encryption tools with data obfuscation techniques',
-      status: 'COMPLETE' as const,
-      code: [
-        'from cryptography.hazmat.primitives import hashes',
-        'aes_key = generate_aes_256_key()',
-        'rsa_keypair = generate_rsa_4096()',
-        'encrypted = hybrid_encrypt(data, aes_key, rsa_keypair)',
-        'obfuscated = apply_obfuscation(encrypted)',
-      ],
-    },
-    {
-      title: 'Privacy-Focused Browser & Search Engine',
-      description: 'Custom browser with strong privacy features and self-hosted secure search',
-      status: 'RUNNING' as const,
-      code: [
-        'docker-compose up -d searxng',
-        'nginx proxy_pass /search;',
-        'tor_enabled: true',
-        'tracking_protection: maximum',
-        'dns_over_https: cloudflare',
-      ],
-    },
-    {
-      title: 'Automated Backup & Disaster Recovery',
-      description: 'Real-time multi-site replication with secure encrypted backups',
-      status: 'VALIDATED' as const,
-      code: [
-        'async def backup_critical_systems():',
-        '    snapshot = create_incremental_snapshot()',
-        '    encrypted = encrypt_aes256_gcm(snapshot)',
-        '    await replicate_to_sites(["site_a", "site_b"])',
-        '    verify_integrity(checksum)',
-      ],
-    },
-    {
-      title: 'Network Security Assessment Framework',
-      description: 'Penetration testing toolkit for vulnerability assessment and exploit research',
-      status: 'TESTING' as const,
-      code: [
-        'def security_audit(target_network):',
-        '    vulnerabilities = scan_ports(target)',
-        '    exploits = match_cve_database(vulnerabilities)',
-        '    report = generate_pentest_report()',
-        '    return remediation_steps(exploits)',
-      ],
-    },
-  ];
-
   const goals = [
     { goal: 'Master Offensive Security & Obtain Certifications', progress: 45, difficulty: 'EXTREME' },
     { goal: 'Build Highly Secure Self-Hosted IT Ecosystem', progress: 70, difficulty: 'HIGH' },
@@ -227,44 +193,145 @@ const Portfolio = memo(() => {
       <MatrixBackground />
       <ScanlineEffect />
       <JinwooEasterEgg />
+      <EasterEggs />
+      <CommandPalette />
+      <BackToTop />
+      <IdleLockScreen />
       
-      {}
+      {/* Header */}
       <header 
         ref={headerRef}
         className="border-b border-border/20 glass sticky top-0 z-40 animate-slide-down"
       >
         <div className="max-w-6xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden border border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
+            <div
+              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg overflow-hidden border border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.3)] cursor-pointer transition-all duration-200 ${logoGlitch ? 'ee-logo-glitch' : ''}`}
+              onClick={() => {
+                logoClickRef.current += 1;
+                if (logoTimerRef.current) clearTimeout(logoTimerRef.current);
+                logoTimerRef.current = setTimeout(() => { logoClickRef.current = 0; }, 3000);
+                if (logoClickRef.current >= 10) {
+                  logoClickRef.current = 0;
+                  setLogoGlitch(true);
+                  document.body.classList.add('ee-screen-invert');
+                  setTimeout(() => {
+                    setLogoGlitch(false);
+                    document.body.classList.remove('ee-screen-invert');
+                  }, 2000);
+                }
+              }}
+            >
               <img src={logo} alt="Onslaught2342 Logo" className="w-full h-full object-cover" loading="lazy" />
             </div>
             <span className="text-sm sm:text-xl font-bold text-foreground font-display tracking-wider">
               <GlitchText text="./Onslaught2342" intensity="low" />
             </span>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
+
+          {/* Desktop nav */}
+          <nav className="hidden md:flex items-center gap-1" role="navigation" aria-label="Main navigation">
+            {[
+              { label: 'About', id: 'about' },
+              { label: 'Skills', id: 'skills' },
+              { label: 'Repos', id: 'repos' },
+            ].map((link) => (
+              <button
+                key={link.id}
+                onClick={() => document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' })}
+                className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary transition-colors font-mono rounded-lg hover:bg-primary/5"
+              >
+                {link.label}
+              </button>
+            ))}
+            <Link to="/projects" className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary transition-colors font-mono rounded-lg hover:bg-primary/5">
+              Projects
+            </Link>
+            <Link to="/resume" className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary transition-colors font-mono rounded-lg hover:bg-primary/5">
+              Resume
+            </Link>
+            <Link to="/contact" className="px-3 py-1.5 text-xs text-muted-foreground hover:text-primary transition-colors font-mono rounded-lg hover:bg-primary/5">
+              Contact
+            </Link>
             <button
-              onClick={toggleMute}
-              className="p-1.5 sm:p-2 rounded-lg glass-subtle hover:bg-primary/10 transition-all duration-300"
-              aria-label={isMuted ? 'Unmute' : 'Mute'}
+              onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+              className="ml-1 px-2 py-1 glass-subtle rounded-lg text-[10px] text-muted-foreground/50 hover:text-primary
+                hover:border-primary/30 transition-all font-mono flex items-center gap-1"
+              aria-label="Open command palette"
             >
-              {isMuted ? (
-                <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-muted-foreground" />
-              ) : (
-                <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-              )}
+              <kbd className="border border-border/30 rounded px-1 py-0.5 text-[9px]">⌘K</kbd>
             </button>
-            <div className="flex text-[10px] sm:text-xs space-x-2 text-muted-foreground font-mono">
-              <span className="text-primary glow-text">[ONLINE]</span>
-              <span className="hidden sm:inline text-accent/40">|</span>
-              <span className="hidden sm:inline text-accent glow-text-accent">[SECURE]</span>
+            <div className="ml-1">
+              <ThemeToggle />
             </div>
+          </nav>
+
+          {/* Mobile nav */}
+          <div className="flex md:hidden items-center gap-2">
+            <ThemeToggle />
+            <Sheet>
+              <SheetTrigger asChild>
+                <button className="p-2 glass-subtle rounded-lg text-muted-foreground hover:text-primary transition-colors" aria-label="Menu">
+                  <Menu className="w-5 h-5" />
+                </button>
+              </SheetTrigger>
+              <SheetContent side="right" className="glass w-64 border-border/20 p-6">
+                <nav className="flex flex-col gap-1 mt-8" role="navigation" aria-label="Mobile navigation">
+                  <p className="text-[10px] text-muted-foreground/40 font-mono px-3 mb-2">$ ls ./pages</p>
+                  {[
+                    { label: 'About', id: 'about' },
+                    { label: 'Skills', id: 'skills' },
+                    { label: 'Repos', id: 'repos' },
+                  ].map((link, i) => (
+                    <motion.button
+                      key={link.id}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + i * 0.06, duration: 0.3 }}
+                      onClick={() => {
+                        document.getElementById(link.id)?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors font-mono text-left rounded-lg hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
+                    >
+                      /{link.label.toLowerCase()}
+                    </motion.button>
+                  ))}
+                  <div className="border-t border-border/20 my-2" />
+                  {[
+                    { to: '/projects', label: '/projects' },
+                    { to: '/resume', label: '/resume' },
+                    { to: '/contact', label: '/contact' },
+                  ].map((link, i) => (
+                    <motion.div
+                      key={link.to}
+                      initial={{ opacity: 0, x: -16 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.3 + i * 0.06, duration: 0.3 }}
+                    >
+                      <Link to={link.to} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-primary transition-colors font-mono rounded-lg hover:bg-primary/5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none">
+                        {link.label}
+                      </Link>
+                    </motion.div>
+                  ))}
+                  <div className="border-t border-border/20 my-2" />
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.5 }}
+                    onClick={() => window.dispatchEvent(new Event('open-command-palette'))}
+                    className="px-3 py-2 text-[10px] text-muted-foreground/40 font-mono text-left flex items-center gap-2"
+                  >
+                    <kbd className="border border-border/30 rounded px-1.5 py-0.5">⌘K</kbd> Command Palette
+                  </motion.button>
+                </nav>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </header>
 
       <main ref={mainRef} className="relative z-10 max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-12 space-y-8 sm:space-y-16">
-        {}
+        {/* Hero Section */}
         <section>
           <CommandBox command="whoami" glow delay={100} priority={true} onAnimationComplete={handlePriorityComplete}>
             <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4 text-foreground glow-text font-display tracking-wide">
@@ -298,8 +365,8 @@ const Portfolio = memo(() => {
           </CommandBox>
         </section>
 
-        {}
-        <section className="grid md:grid-cols-2 gap-4 sm:gap-8">
+        {/* About & Skills */}
+        <section id="about" className="grid md:grid-cols-2 gap-4 sm:gap-8 scroll-mt-20">
           <div>
             <CommandBox command="cat /home/onslaught/bio.txt" delay={200} priority={true} onAnimationComplete={handlePriorityComplete}>
               <div className="space-y-3 sm:space-y-4 text-xs sm:text-sm font-body">
@@ -329,9 +396,9 @@ const Portfolio = memo(() => {
           </div>
         </section>
 
-        {}
+        {/* Tech Arsenal */}
         {canAnimateScrollBoxes && (
-          <section>
+          <section id="skills" className="scroll-mt-20">
             <CommandBox command="neofetch --tech-stack" delay={0}>
               <div className="grid grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4">
                 {techCategories.map((category) => (
@@ -359,27 +426,57 @@ const Portfolio = memo(() => {
           </section>
         )}
 
-        {}
+
+        {/* Featured GitHub Repos */}
         {canAnimateScrollBoxes && (
-          <section>
-            <CommandBox command="ls -la /projects/active" delay={0}>
-              <div className="space-y-3 sm:space-y-4">
-                {projects.map((project) => (
-                  <div key={project.title} className="project-card">
-                    <ProjectCard {...project} />
-                  </div>
-                ))}
+          <section id="repos" className="scroll-mt-20">
+            <CommandBox command="gh repo list onslaught2342 --limit 4" delay={0}>
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-sm sm:text-base font-display text-foreground">
+                  <GlitchText text="FEATURED REPOSITORIES" intensity="low" />
+                </h2>
+                <div className="flex items-center gap-3">
+                  <Link
+                    to="/projects"
+                    className="flex items-center gap-1.5 px-3 py-1.5 glass-subtle rounded-lg text-[10px] sm:text-xs text-primary hover:text-accent hover:border-primary/40 transition-all font-mono"
+                  >
+                    <Globe className="w-3 h-3" />
+                    Site
+                  </Link>
+                  <Link
+                    to="/projects"
+                    className="flex items-center gap-1 text-[10px] sm:text-xs text-primary hover:text-accent transition-colors font-mono"
+                  >
+                    View All <ArrowRight className="w-3 h-3" />
+                  </Link>
+                </div>
               </div>
+              {reposLoading ? (
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <RepoCardSkeleton key={i} />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
+                  {featuredRepos?.map((repo) => (
+                    <div key={repo.id} className="project-card">
+                      <GitHubProjectCard repo={repo} />
+                    </div>
+                  ))}
+                </div>
+              )}
             </CommandBox>
           </section>
         )}
 
-        {}
+
+        {/* Goals */}
         {canAnimateScrollBoxes && (
           <section>
             <CommandBox command="cat /etc/objectives.conf" delay={0}>
               <div className="space-y-3 sm:space-y-4">
-                {goals.map((item) => (
+                {goals.map((item, index) => (
                   <div
                     key={item.goal}
                     className="goal-item p-3 sm:p-4 glass-subtle rounded-xl
@@ -395,13 +492,7 @@ const Portfolio = memo(() => {
                         [{item.difficulty}]
                       </span>
                     </div>
-                    <div className="h-2 sm:h-2.5 bg-muted/20 rounded-full overflow-hidden glass-subtle">
-                      <div
-                        className="h-full bg-gradient-to-r from-primary via-accent to-secondary rounded-full transition-all duration-1000 ease-out progress-glow"
-                        style={{ width: `${item.progress}%` }}
-                      />
-                    </div>
-                    <p className="text-[10px] sm:text-xs text-muted-foreground/60 mt-2 text-right font-mono">{item.progress}% complete</p>
+                    <GoalProgressBar progress={item.progress} delay={index * 0.15} />
                   </div>
                 ))}
               </div>
@@ -409,10 +500,10 @@ const Portfolio = memo(() => {
           </section>
         )}
 
-        {}
+        {/* Contact */}
         {canAnimateScrollBoxes && (
-          <section>
-            <CommandBox command="curl -X GET https://onslaught2342.secure/contact" glow delay={0}>
+          <section id="contact" className="scroll-mt-20">
+            <CommandBox command={`curl -X GET ${window.location.origin}/contact`} glow delay={0}>
               <div className="text-center">
                 <p className="text-muted-foreground mb-4 sm:mb-6 text-xs sm:text-base font-body">
                   Interested in <span className="text-accent">security research</span>? Want to collaborate on something <span className="text-primary">epic</span>?
@@ -440,6 +531,16 @@ const Portfolio = memo(() => {
                     <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     [DISCORD]
                   </button>
+                  <Link
+                    to="/contact"
+                    className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-5 py-2 sm:py-2.5 
+                      glass-subtle rounded-xl text-foreground text-[10px] sm:text-sm 
+                      hover:border-secondary/50 hover:bg-secondary/10 hover:shadow-[0_0_25px_hsl(var(--secondary)/0.2)]
+                      transition-all duration-300 active:scale-95 font-mono"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    [CONTACT_FORM]
+                  </Link>
                 </div>
               </div>
             </CommandBox>
@@ -447,7 +548,7 @@ const Portfolio = memo(() => {
         )}
       </main>
 
-      {}
+      {/* Footer */}
       <footer className="gsap-footer relative z-10 border-t border-border/20 glass mt-12 sm:mt-16">
         <div className="max-w-6xl mx-auto px-3 sm:px-6 py-6 sm:py-8">
           <div className="grid sm:grid-cols-3 gap-4 sm:gap-8 mb-6 sm:mb-8 text-xs sm:text-sm">
@@ -476,6 +577,7 @@ const Portfolio = memo(() => {
               </p>
             </div>
           </div>
+          <UptimeCounter />
           <div className="border-t border-border/15 pt-4 sm:pt-6 text-center text-muted-foreground/40 text-[10px] sm:text-xs font-mono">
             <p className="text-primary glow-text">$ exit 0</p>
             <p className="mt-2">CONNECTION CLOSED • <span className="text-accent">STAY CURIOUS</span> • STAY SECURE</p>

@@ -38,7 +38,7 @@ const MatrixRain = () => {
         const x = i * fontSize;
         const y = drops[i] * fontSize;
         
-        
+        // Add glow effect for some characters
         if (Math.random() > 0.98) {
           ctx.shadowBlur = 10;
           ctx.shadowColor = '#00FF00';
