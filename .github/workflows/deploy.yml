@@ -1,58 +1,58 @@
 name: Build and Deploy to GitHub Pages
 
 on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+    push:
+        branches: [main]
+    workflow_dispatch:
 
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
 concurrency:
-  group: "pages"
-  cancel-in-progress: true
+    group: "pages"
+    cancel-in-progress: true
 
 jobs:
-  build:
-    runs-on: ubuntu-22.04
-    strategy:
-      matrix:
-        node-version: [24]   # your Node version
-    steps:
-      - name: 🔍 Checkout repo
-        uses: actions/checkout@v4
+    build:
+        runs-on: ubuntu-22.04
+        strategy:
+            matrix:
+                node-version: [24] # your Node version
+        steps:
+            - name: 🔍 Checkout repo
+              uses: actions/checkout@v4
 
-      - name: ⚡ Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10   # latest stable pnpm
+            - name: ⚡ Install pnpm
+              uses: pnpm/action-setup@v4
+              with:
+                  version: 10 # latest stable pnpm
 
-      - name: ⚙️ Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+            - name: ⚙️ Setup Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: ${{ matrix.node-version }}
+                  cache: "pnpm"
 
-      - name: 📥 Install dependencies
-        run: pnpm install --frozen-lockfile
+            - name: 📥 Install dependencies
+              run: pnpm install --frozen-lockfile
 
-      - name: 🛠 Build
-        run: pnpm run build
+            - name: 🛠 Build
+              run: pnpm run build
 
-      - name: 🚀 Upload to GitHub Pages
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./dist
+            - name: 🚀 Upload to GitHub Pages
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: ./dist
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: 📡 Deploy
-        id: deployment
-        uses: actions/deploy-pages@v4
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - name: 📡 Deploy
+              id: deployment
+              uses: actions/deploy-pages@v4

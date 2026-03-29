@@ -1,45 +1,46 @@
-import { memo } from 'react';
+import { memo } from "react";
 
 interface GlitchTextProps {
-  text: string;
-  className?: string;
-  intensity?: 'low' | 'medium' | 'high';
+	text: string;
+	className?: string;
+	intensity?: "low" | "medium" | "high";
 }
 
-const GlitchText = memo(({ text, className = '', intensity = 'medium' }: GlitchTextProps) => {
-  const getIntensityStyles = () => {
-    switch (intensity) {
-      case 'low':
-        return {
-          animDuration: '6s',
-          offset1: '1px',
-          offset2: '1px',
-        };
-      case 'high':
-        return {
-          animDuration: '2s',
-          offset1: '3px',
-          offset2: '4px',
-        };
-      default:
-        return {
-          animDuration: '4s',
-          offset1: '2px',
-          offset2: '3px',
-        };
-    }
-  };
+const GlitchText = memo(
+	({ text, className = "", intensity = "medium" }: GlitchTextProps) => {
+		const getIntensityStyles = () => {
+			switch (intensity) {
+				case "low":
+					return {
+						animDuration: "6s",
+						offset1: "1px",
+						offset2: "1px",
+					};
+				case "high":
+					return {
+						animDuration: "2s",
+						offset1: "3px",
+						offset2: "4px",
+					};
+				default:
+					return {
+						animDuration: "4s",
+						offset1: "2px",
+						offset2: "3px",
+					};
+			}
+		};
 
-  const styles = getIntensityStyles();
+		const styles = getIntensityStyles();
 
-  return (
-    <span 
-      className={`glitch-text-wrapper ${className}`} 
-      data-text={text}
-      aria-label={text}
-    >
-      {text}
-      <style>{`
+		return (
+			<span
+				className={`glitch-text-wrapper ${className}`}
+				data-text={text}
+				aria-label={text}
+			>
+				{text}
+				<style>{`
         .glitch-text-wrapper {
           position: relative;
           display: inline-block;
@@ -144,10 +145,11 @@ const GlitchText = memo(({ text, className = '', intensity = 'medium' }: GlitchT
           }
         }
       `}</style>
-    </span>
-  );
-});
+			</span>
+		);
+	},
+);
 
-GlitchText.displayName = 'GlitchText';
+GlitchText.displayName = "GlitchText";
 
 export default GlitchText;
